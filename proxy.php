@@ -49,6 +49,7 @@ class Proxy {
 			if($con = @fsockopen($ip, $port, $errno, $error, 10)) {
 				echo "\033[K#> \e[32mLive\e[0m => ". $ip .':'. $port . PHP_EOL;
 				$this->saveProxy($ip, $port);
+				fclose($con);
 			} else {
 				echo "\033[K#> \e[31mDie\e[0m  => ". $ip .':'. $port . ' | ' . $error . PHP_EOL;
 			}
