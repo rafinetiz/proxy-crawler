@@ -8,11 +8,27 @@
 class Proxy {
 	private $response;
 	private $proxy;
+	private $savefile;
+	private $typeproxy;
+	
+	function __construct($savefile, $type) {
+		$this->savefile  = $savefile;
+		$this->typeproxy = $type;
+	}
 	
 	function ambilProxy() {
-		echo '#> Mengambil proxy...' . PHP_EOL;
+		if ($this->typeproxy === 'http') {
+			$proxyUrl = 'https://free-proxy-list.net/';
+		} else if($this->typeproxy === 'socks') {
+			$proxyUrl = 'https://www.socks-proxy.net/';
+		} else {
+			echo "Unknown proxy\n";
+			exit();
+		}
+		
+		echo "#> Mengambil {$type} proxy..." . PHP_EOL;
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, 'https://free-proxy-list.net/');
+		curl_setopt($ch, CURLOPT_URL, $proxyUrl);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$resp = curl_exec($ch);
 		curl_close($ch);
@@ -26,20 +42,37 @@ class Proxy {
 		return $this;
 	}
 	
-	function checkProxy($timeout = 10) {
+	function checkProxy() {
 		$i = 0;
 		foreach($this->proxy as $ip => $port) {
 			echo "\e[44m#> Memeriksa proxy: ".$ip.':'.$port."\e[49m (".$i." of ".count($this->proxy).") | \e[4mCreated by rafinetiz\e[0m\r";
 			if($con = @fsockopen($ip, $port, $errno, $error, 10)) {
 				echo "\033[K#> \e[32mLive\e[0m => ". $ip .':'. $port . PHP_EOL;
-				file_put_contents('proxy.txt', $ip.':'.$port.PHP_EOL, FILE_APPEND);
+				$this->saveProxy($ip, $port);
 			} else {
 				echo "\033[K#> \e[31mDie\e[0m  => ". $ip .':'. $port . ' | ' . $error . PHP_EOL;
 			}
 			$i++;
 		}
 	}
+	
+	function saveProxy($ip, $port) {
+		if(file_exists($this->savefile)) {
+			file_put_contents($this->savefile, "{$ip}:{$port}\n", FILE_APPEND);
+		} else {
+			file_put_contents($this->savefile, "Live {$this->typeproxy} proxy list:\n{$ip}:{$port}\n");
+		}
+	}
 }
 
-$crawler = new Proxy();
+if($argc < 2) {
+	echo "Usage: php {$argv[0]} PROXY_TYPE <filename>" . PHP_EOL . PHP_EOL;
+	echo "PROXY_TYPE - type of the proxy\n";
+	echo "filename   - proxy will be saved to this file (default: proxy.txt)\n";
+	echo "Available proxy type:\n http\n socks\n";
+	exit(1);
+}
+
+$outfile = ($argv[2] == null) ? 'proxy.txt' : (string)$argv[2];
+$crawler = new Proxy($outfile, $argv[1]);
 $crawler->ambilProxy()->satukan()->checkProxy();
