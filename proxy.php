@@ -26,7 +26,7 @@ class Proxy {
 			exit();
 		}
 		
-		echo "#> Mengambil {$type} proxy..." . PHP_EOL;
+		echo "#> Mengambil {$this->typeproxy} proxy..." . PHP_EOL;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $proxyUrl);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
