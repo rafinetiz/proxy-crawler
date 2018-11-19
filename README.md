@@ -1,7 +1,7 @@
-# proxy-crawler
+## proxy-crawler
 Proxy Crawler + Auto Check + Auto Save Live Proxy
 
-# Cara Pemakaian / How to Use
+## Cara Pemakaian / How to Use
 1. Clone repo ini atau download proxy.php dengan menggunakan command\
 `curl https://raw.githubusercontent.com/rafinetiz/proxy-crawler/master/proxy.php -Lo proxy.php`
 2. Jalankan script dengan menggunakan command `php proxy.php`\
