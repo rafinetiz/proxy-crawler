@@ -17,13 +17,20 @@ class Proxy {
 	}
 	
 	function ambilProxy() {
-		if ($this->typeproxy === 'http') {
-			$proxyUrl = 'https://free-proxy-list.net/';
-		} else if($this->typeproxy === 'socks') {
-			$proxyUrl = 'https://www.socks-proxy.net/';
-		} else {
-			echo "Unknown proxy\n";
-			exit();
+		switch($this->typeproxy) {
+			case "http":
+				$proxyUrl = "https://free-proxy-list.net";
+				break;
+			case "https":
+				$proxyUrl = "https://www.sslproxies.org";
+				break;
+			case "socks":
+				$proxyUrl = "https://www.socks-proxy.net";
+				break;
+			default:
+				echo "#> Unknown proxy type";
+				exit();
+				break;
 		}
 		
 		echo "#> Mengambil {$this->typeproxy} proxy..." . PHP_EOL;
@@ -58,20 +65,24 @@ class Proxy {
 	}
 	
 	function saveProxy($ip, $port) {
-		if(file_exists($this->savefile)) {
-			file_put_contents($this->savefile, "{$ip}:{$port}\n", FILE_APPEND);
-		} else {
-			file_put_contents($this->savefile, "Live {$this->typeproxy} proxy list:\n{$ip}:{$port}\n");
-		}
+		file_put_contents($this->savefile, "{$ip}:{$port}" . PHP_EOL, FILE_APPEND);
 	}
 }
 
 if($argc < 2) {
-	echo "Usage: php {$argv[0]} PROXY_TYPE <filename>" . PHP_EOL . PHP_EOL;
-	echo "PROXY_TYPE - type of the proxy\n";
-	echo "filename   - proxy will be saved to this file (default: proxy.txt)\n";
-	echo "Available proxy type:\n http\n socks\n";
-	exit(1);
+echo <<<"RFZ"
+Usage: php {$argv[0]} PROXY_TYPE <filename>
+
+PROXY_TYPE - Type of the proxy
+filename   - File tempat menyimpan proxy (default: proxy.txt)
+
+PROXY TYPE:
+  http    - HTTP Proxy
+  https   - HTTP Proxy with SSL/TLS Support
+  socks   - SOCKS 4/5 Proxy
+
+RFZ;
+exit(1);
 }
 
 $outfile = ($argv[2] == null) ? 'proxy.txt' : (string)$argv[2];
